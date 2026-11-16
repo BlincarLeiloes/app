@@ -1,0 +1,25 @@
+{
+  "name": "sistema-de-pagamentos",
+  "version": "2.0.0",
+  "description": "Controle pessoal de recebimentos e gastos — app instalável (PWA) com servidor próprio.",
+  "private": true,
+  "type": "module",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env server/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env --watch server/index.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js",
+    "icons": "node scripts/make-icons.mjs",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.14"
+  }
+}

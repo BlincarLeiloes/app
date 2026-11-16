@@ -1,0 +1,23 @@
+# Deploy no Render (https://render.com) — "New > Blueprint" e aponte para este repositório.
+# Banco de dados: crie um Postgres grátis no Neon (https://neon.tech) e cole a URL em DATABASE_URL.
+services:
+  - type: web
+    name: sistema-de-pagamentos
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: APP_TIMEZONE
+        value: America/Sao_Paulo
+      - key: DATABASE_URL
+        sync: false
+      - key: PLUGGY_CLIENT_ID
+        sync: false
+      - key: PLUGGY_CLIENT_SECRET
+        sync: false
