@@ -192,27 +192,27 @@ function buildInsights(s, monthTx) {
   const dim = daysInMonth(y, m);
 
   if (s.isFutureMonth) {
-    out.push({ id: 'future', tone: 'info', icon: '🗓️', title: 'Mês ainda não começou',
+    out.push({ id: 'future', tone: 'info', title: 'Mês ainda não começou',
       text: monthTx.length ? `Você já tem ${monthTx.length} lançamento(s) agendado(s) para este mês.` : 'Nada registrado para este mês ainda.' });
     return out;
   }
 
   if (!monthTx.length) {
-    out.push({ id: 'empty', tone: 'info', icon: '👋', title: s.isCurrentMonth ? 'Comece por aqui' : 'Mês sem lançamentos',
+    out.push({ id: 'empty', tone: 'info', title: s.isCurrentMonth ? 'Comece por aqui' : 'Mês sem lançamentos',
       text: s.isCurrentMonth ? 'Toque no botão + para registrar seu primeiro recebimento ou gasto.' : 'Nenhum recebimento ou gasto registrado neste mês.' });
   }
 
   // previsão de recebimentos
   if (s.forecast.month > 0) {
     if (income >= s.forecast.month) {
-      out.push({ id: 'forecast-ok', tone: 'good', icon: '🎉', title: 'Previsão do mês batida!',
+      out.push({ id: 'forecast-ok', tone: 'good', title: 'Previsão do mês alcançada',
         text: `Você recebeu ${moneyShort(income)} — ${s.forecast.pct}% do previsto (${moneyShort(s.forecast.month)}).` });
     } else if (s.isCurrentMonth) {
       const weeksLeft = s.weeks.filter((w) => w.status === 'current' || w.status === 'future').length || 1;
-      out.push({ id: 'forecast-left', tone: 'info', icon: '🎯', title: `Faltam ${moneyShort(s.forecast.remaining)} para a previsão`,
+      out.push({ id: 'forecast-left', tone: 'info', title: `Faltam ${moneyShort(s.forecast.remaining)} para a previsão`,
         text: `Dá ${moneyShort(Math.ceil(s.forecast.remaining / weeksLeft / 100) * 100)} por semana nas ${weeksLeft} semana(s) que faltam.` });
     } else if (s.isPastMonth && monthTx.length) {
-      out.push({ id: 'forecast-missed', tone: 'warn', icon: '📉', title: 'Previsão não alcançada',
+      out.push({ id: 'forecast-missed', tone: 'warn', title: 'Previsão não alcançada',
         text: `Faltaram ${moneyShort(s.forecast.remaining)} para chegar em ${moneyShort(s.forecast.month)}.` });
     }
   }
@@ -220,7 +220,7 @@ function buildInsights(s, monthTx) {
   // saldo / orçamento diário
   if (monthTx.length) {
     if (balance < 0) {
-      out.push({ id: 'negative', tone: 'bad', icon: '🚨', title: 'Mês no vermelho',
+      out.push({ id: 'negative', tone: 'bad', title: 'Mês no vermelho',
         text: `Você gastou ${money(-balance)} a mais do que recebeu ${s.isCurrentMonth ? 'este mês' : 'neste mês'}.` });
     } else if (s.isCurrentMonth) {
       const daysRemaining = dim - dayOfMonth + 1;
@@ -228,7 +228,7 @@ function buildInsights(s, monthTx) {
       if (s.limit) available = Math.min(available, Math.max(0, s.limit.remaining));
       const perDay = Math.floor(available / daysRemaining);
       if (perDay > 0) {
-        out.push({ id: 'daily', tone: 'info', icon: '💡', title: `Pode gastar até ${money(perDay)} por dia`,
+        out.push({ id: 'daily', tone: 'info', title: `Pode gastar até ${money(perDay)} por dia`,
           text: `Assim você chega ao fim do mês (${daysRemaining} dia(s)) sem ficar no vermelho${s.limit ? ' e dentro do limite' : ''}.` });
       }
     }
@@ -237,10 +237,10 @@ function buildInsights(s, monthTx) {
   // limite de gastos
   if (s.limit && expense > 0) {
     if (s.limit.pct >= 100) {
-      out.push({ id: 'limit-over', tone: 'bad', icon: '⛔', title: 'Limite de gastos estourado',
+      out.push({ id: 'limit-over', tone: 'bad', title: 'Limite de gastos estourado',
         text: `Você passou ${money(expense - s.limit.value)} do limite de ${moneyShort(s.limit.value)}.` });
     } else if (s.limit.pct >= 80) {
-      out.push({ id: 'limit-80', tone: 'warn', icon: '⚠️', title: `${s.limit.pct}% do limite usado`,
+      out.push({ id: 'limit-80', tone: 'warn', title: `${s.limit.pct}% do limite usado`,
         text: `Restam ${money(s.limit.remaining)} do limite de ${moneyShort(s.limit.value)} para este mês.` });
     }
   }
@@ -255,13 +255,13 @@ function buildInsights(s, monthTx) {
       const base = prior.length === 1 ? 'do mês passado' : `da sua média dos últimos ${prior.length} meses`;
       const when = s.isCurrentMonth ? ' até aqui' : '';
       if (diff <= -10) {
-        out.push({ id: 'pace', tone: 'good', icon: '👏', title: `Gastos ${-diff}% abaixo do normal`,
-          text: `Seus gastos${when} estão abaixo ${base}. Continue assim!` });
+        out.push({ id: 'pace', tone: 'good', title: `Gastos ${-diff}% abaixo do normal`,
+          text: `Seus gastos${when} estão abaixo ${base}. Continue assim.` });
       } else if (diff >= 10) {
-        out.push({ id: 'pace', tone: 'warn', icon: '📈', title: `Gastos ${diff}% acima do normal`,
+        out.push({ id: 'pace', tone: 'warn', title: `Gastos ${diff}% acima do normal`,
           text: `Seus gastos${when} passaram ${base}. Vale dar uma olhada nas categorias.` });
       } else {
-        out.push({ id: 'pace', tone: 'info', icon: '⚖️', title: 'Gastos dentro do normal',
+        out.push({ id: 'pace', tone: 'info', title: 'Gastos dentro do normal',
           text: `Seus gastos${when} estão na linha ${base}.` });
       }
     }
@@ -270,7 +270,7 @@ function buildInsights(s, monthTx) {
   // maior categoria de gasto
   const top = s.categories[0];
   if (top && s.categories.length > 1) {
-    out.push({ id: 'top-cat', tone: 'info', icon: top.icon, title: `Maior gasto: ${top.label}`,
+    out.push({ id: 'top-cat', tone: 'info', title: `Maior gasto: ${top.label}`,
       text: `${money(top.total)} — ${top.pct}% de tudo que saiu no mês.` });
   }
 
@@ -283,7 +283,7 @@ function buildNotifications(s, tx) {
     if (w.forecast <= 0) continue;
     if (w.status === 'done') {
       list.push({ id: `week-done:${w.start}`, tone: 'good', date: w.isCurrent ? s.today : w.end,
-        title: `Semana ${w.index} completa! ✨`, text: `Você recebeu toda a previsão da semana (${moneyShort(w.forecast)}).` });
+        title: `Semana ${w.index} completa`, text: `Você recebeu toda a previsão da semana (${moneyShort(w.forecast)}).` });
     } else if (w.status === 'current' && w.daysLeft <= 2) {
       list.push({ id: `week-ending:${w.start}`, tone: 'warn', date: s.today,
         title: `Semana ${w.index} terminando`, text: `Faltam ${moneyShort(w.remaining)} para completar • ${w.daysLeft} dia(s) restante(s).` });
@@ -293,7 +293,7 @@ function buildNotifications(s, tx) {
     }
   }
   if (s.forecast.month > 0 && s.totals.income >= s.forecast.month) {
-    list.push({ id: `month-done:${s.month}`, tone: 'good', date: s.today, title: 'Previsão do mês batida! 🎉',
+    list.push({ id: `month-done:${s.month}`, tone: 'good', date: s.today, title: 'Previsão do mês alcançada',
       text: `Você já recebeu ${moneyShort(s.totals.income)} este mês.` });
   }
   if (s.limit) {

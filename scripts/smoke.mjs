@@ -24,7 +24,8 @@ const shots = process.env.SHOTS;
 if (shots) mkdirSync(shots, { recursive: true });
 
 const browser = await playwright.chromium.launch();
-const context = await browser.newContext({ ...playwright.devices['Pixel 7'], locale: 'pt-BR', timezoneId: 'America/Sao_Paulo' });
+const colorScheme = process.env.SCHEME === 'dark' ? 'dark' : 'light';
+const context = await browser.newContext({ ...playwright.devices['Pixel 7'], locale: 'pt-BR', timezoneId: 'America/Sao_Paulo', colorScheme });
 const page = await context.newPage();
 const errors = [];
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
@@ -64,8 +65,10 @@ try {
   await page.reload();
   await page.waitForSelector('.week');
   await shot('02-inicio');
-  await page.evaluate(() => window.scrollTo(0, 700));
+  await page.evaluate(() => window.scrollTo(0, 620));
   await shot('03-inicio-semanas');
+  await page.evaluate(() => window.scrollTo(0, 1350));
+  await shot('03b-inicio-fim');
 
   step('novo lançamento pelo +');
   await page.click('.fab');
@@ -93,7 +96,7 @@ try {
   await page.waitForSelector('.overlay', { state: 'detached' });
 
   step('extrato + editar');
-  await page.click('.nav a[href="#/extrato"]');
+  await page.click('.nav a[href="#extrato"]');
   await page.waitForSelector('.day-head');
   await shot('06-extrato');
   await page.click('.tx:has-text("Mercado da semana")');
@@ -102,14 +105,21 @@ try {
   await page.waitForSelector('.overlay', { state: 'detached' });
 
   step('análise');
-  await page.click('.nav a[href="#/analise"]');
+  await page.click('.nav a[href="#analise"]');
   await page.waitForSelector('.chart svg');
   await shot('07-analise');
 
   step('perfil (antes fechava o app!)');
-  await page.click('.nav a[href="#/perfil"]');
+  await page.click('.nav a[href="#perfil"]');
   await page.waitForSelector('.profile-card');
   await shot('08-perfil');
+  await page.evaluate(() => window.scrollTo(0, 900));
+  await shot('08b-perfil-fim');
+  step('trocar tema pelo Perfil');
+  await page.click('.seg button[data-v="dark"]');
+  if ((await page.getAttribute('html', 'data-theme')) !== 'dark') throw new Error('tema escuro não aplicou');
+  await page.click('.seg button[data-v="auto"]');
+  if (await page.getAttribute('html', 'data-theme')) throw new Error('tema automático não aplicou');
   await page.click('.menu-item:has-text("Conectar banco")');
   await page.waitForSelector('.sheet .note');
   await shot('09-open-finance');
@@ -117,7 +127,7 @@ try {
   await page.waitForSelector('.overlay', { state: 'detached' });
 
   step('salvar metas');
-  await page.click('form.card button[type=submit]');
+  await page.click('form.goals button[type=submit]');
   await page.waitForSelector('.toast:has-text("Metas salvas")');
 
   step('sair e entrar de novo');

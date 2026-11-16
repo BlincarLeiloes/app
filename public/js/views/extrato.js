@@ -20,7 +20,7 @@ export function renderExtrato(ctx) {
 
   let timer;
   const search = h('input', {
-    class: 'input', type: 'search', placeholder: 'Buscar descrição...', value: filters.q, 'aria-label': 'Buscar',
+    class: 'input', type: 'search', id: 'busca', placeholder: 'Buscar descrição', value: filters.q, 'aria-label': 'Buscar',
     oninput: () => {
       clearTimeout(timer);
       timer = setTimeout(() => { filters.q = search.value.trim(); reload(); }, 300);
@@ -29,19 +29,20 @@ export function renderExtrato(ctx) {
 
   reload();
   return h('div', { class: 'screen' },
+    ctx.demoBar?.(),
     h('h1', { class: 'page-title' }, 'Extrato'),
     monthSwitch(ctx),
     seg([['all', 'Tudo'], ['in', 'Entradas'], ['out', 'Saídas']], filters.kind, (v) => { filters.kind = v; reload(); }),
-    h('div', { class: 'search', style: { margin: '10px 0 14px' } }, icon('search'), search),
+    h('div', { class: 'search', style: { margin: '10px 0 12px' } }, icon('search'), search),
     body);
 }
 
 function list(ctx, items) {
   if (!items.length) {
-    return h('div', { class: 'card' }, emptyState('🔎', 'Nenhum lançamento', filters.q || filters.kind !== 'all'
+    return emptyState('Nenhum lançamento', filters.q || filters.kind !== 'all'
       ? 'Nada encontrado com esse filtro neste mês.'
       : 'Nenhum recebimento ou gasto neste mês.',
-    h('button', { class: 'btn primary', onclick: () => ctx.openTx() }, '+ Novo lançamento')));
+    h('button', { class: 'btn primary', onclick: () => ctx.openTx() }, 'Novo lançamento'));
   }
   let tin = 0, tout = 0;
   const days = new Map();
@@ -51,16 +52,16 @@ function list(ctx, items) {
     days.get(t.date).push(t);
   }
   const out = [
-    h('div', { class: 'preview-stats' },
-      h('div', null, h('b', { class: 'num in-c' }, money(tin)), h('small', null, 'Entradas')),
-      h('div', null, h('b', { class: 'num out-c' }, money(tout)), h('small', null, 'Saídas')),
-      h('div', null, h('b', { class: 'num' }, String(items.length)), h('small', null, 'Lançamentos'))),
+    h('div', { class: 'totals' },
+      h('span', null, 'Entradas ', h('b', { class: 'num pos' }, money(tin))),
+      h('span', null, 'Saídas ', h('b', { class: 'num' }, money(tout))),
+      h('span', null, h('b', { class: 'num' }, String(items.length)), ' lançamentos')),
   ];
   for (const [date, list] of days) {
     const net = list.reduce((s, t) => s + (t.kind === 'in' ? t.amount : -t.amount), 0);
     out.push(
       h('div', { class: 'day-head' }, h('span', null, cap(dayLabel(date, ctx.state.today))), h('span', { class: 'num' }, (net >= 0 ? '+ ' : '− ') + money(Math.abs(net)))),
-      h('div', { class: 'tx-list' }, list.map((t) => txRow(ctx, t, { showDate: false }))));
+      h('div', { class: 'list' }, list.map((t) => txRow(ctx, t, { showDate: false }))));
   }
   return h('div', null, out);
 }

@@ -1,6 +1,6 @@
 // Service worker: deixa o app abrir rápido e funcionar sem internet
 // (mostra os últimos dados carregados). Mude VERSION a cada atualização.
-const VERSION = 'v2.0.0';
+const VERSION = 'v2.1.0';
 const SHELL_CACHE = `shell-${VERSION}`;
 const API_CACHE = 'api-v1';
 
@@ -13,6 +13,8 @@ const SHELL = [
   '/icons/icon-192.png',
   '/icons/apple-touch-icon.png',
   '/js/main.js',
+  '/js/theme.js',
+  '/js/theme-boot.js',
   '/js/api.js',
   '/js/ui.js',
   '/js/core/format.js',

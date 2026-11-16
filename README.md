@@ -7,6 +7,16 @@ Os dados ficam no **seu próprio servidor**.
 > Este repositório é a "fonte" do app. Enquanto ele estiver no GitHub, você não perde mais o projeto,
 > mesmo se apagar algo do celular ou do computador.
 
+## Prévia
+
+Sem instalar nada, dá para ver o app funcionando com dados de exemplo em `/previa.html`
+(ex.: `http://localhost:3000/previa.html`). O que você lança na prévia fica só naquele aparelho.
+
+## Visual
+
+Fundo branco ou preto, com o roxo do logo só nos botões, na aba ativa e nas barras de progresso.
+Em *Perfil → Aparência* dá para escolher **Automático** (segue o celular), **Claro** ou **Escuro**.
+
 ## O que tem
 
 | Tela | O que faz |
@@ -25,6 +35,7 @@ Os dados ficam no **seu próprio servidor**.
 - As porcentagens fazem sentido: "você gastou 35% do que recebeu", e a previsão é calculada de verdade pela sua meta semanal.
 - Cores com significado: verde = entrou, vermelho = saiu (antes o "Recebido" era vermelho).
 - As dicas do assistente são calculadas com os seus dados (comparação com a média dos últimos meses, quanto dá para gastar por dia, maior categoria...).
+- Visual mais limpo: sem degradê, sem emoji, sem brilho; tema claro e escuro.
 - Login com senha, servidor próprio, backup e exportação para Excel.
 - Importação de extrato de **qualquer banco** e conexão automática via **Open Finance**.
 
@@ -110,6 +121,8 @@ public/            o app (PWA), em JavaScript puro, sem build
                    format (dinheiro/datas), finance (semanas, previsão, dicas, avisos),
                    importers (OFX/CSV), categories
   js/views/        telas
+  js/demo.js       "servidor de mentira" usado só na prévia (previa.html)
+  js/theme.js      tema claro/escuro/automático
   sw.js            service worker (offline). Aumente VERSION quando mudar arquivos
 test/              testes automáticos (rodam no SQLite e no Postgres)
 scripts/smoke.mjs  abre o app num celular simulado e passa por todas as telas

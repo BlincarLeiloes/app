@@ -3,28 +3,28 @@
 
 export const CATEGORIES = {
   in: [
-    { id: 'salario', label: 'Salário', icon: '💼' },
-    { id: 'servico', label: 'Serviço / Freela', icon: '🛠️' },
-    { id: 'vendas', label: 'Vendas', icon: '🛍️' },
-    { id: 'pix', label: 'Pix / Transferência', icon: '⚡' },
-    { id: 'reembolso', label: 'Reembolso', icon: '↩️' },
-    { id: 'rendimentos', label: 'Rendimentos', icon: '📈' },
-    { id: 'outros_in', label: 'Outros', icon: '➕' },
+    { id: 'salario', label: 'Salário' },
+    { id: 'servico', label: 'Serviço / Freela' },
+    { id: 'vendas', label: 'Vendas' },
+    { id: 'pix', label: 'Pix / Transferência' },
+    { id: 'reembolso', label: 'Reembolso' },
+    { id: 'rendimentos', label: 'Rendimentos' },
+    { id: 'outros_in', label: 'Outros' },
   ],
   out: [
-    { id: 'alimentacao', label: 'Alimentação', icon: '🍔' },
-    { id: 'mercado', label: 'Mercado', icon: '🛒' },
-    { id: 'transporte', label: 'Transporte', icon: '🚗' },
-    { id: 'moradia', label: 'Moradia', icon: '🏠' },
-    { id: 'contas', label: 'Contas (luz, água, net)', icon: '💡' },
-    { id: 'saude', label: 'Saúde', icon: '💊' },
-    { id: 'lazer', label: 'Lazer', icon: '🎮' },
-    { id: 'compras', label: 'Compras', icon: '📦' },
-    { id: 'educacao', label: 'Educação', icon: '📚' },
-    { id: 'assinaturas', label: 'Assinaturas', icon: '📺' },
-    { id: 'cartao', label: 'Cartão / Fatura', icon: '💳' },
-    { id: 'pix_out', label: 'Pix / Transferência', icon: '⚡' },
-    { id: 'outros_out', label: 'Outros', icon: '➖' },
+    { id: 'alimentacao', label: 'Alimentação' },
+    { id: 'mercado', label: 'Mercado' },
+    { id: 'transporte', label: 'Transporte' },
+    { id: 'moradia', label: 'Moradia' },
+    { id: 'contas', label: 'Contas da casa' },
+    { id: 'saude', label: 'Saúde' },
+    { id: 'lazer', label: 'Lazer' },
+    { id: 'compras', label: 'Compras' },
+    { id: 'educacao', label: 'Educação' },
+    { id: 'assinaturas', label: 'Assinaturas' },
+    { id: 'cartao', label: 'Cartão / Fatura' },
+    { id: 'pix_out', label: 'Pix / Transferência' },
+    { id: 'outros_out', label: 'Outros' },
   ],
 };
 
@@ -39,7 +39,7 @@ export function isValidCategory(id, kind) {
 }
 
 export function category(id) {
-  return BY_ID.get(id) || { id, label: 'Outros', icon: '•' };
+  return BY_ID.get(id) || { id, label: 'Outros' };
 }
 
 const RULES = {

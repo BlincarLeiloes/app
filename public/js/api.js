@@ -10,7 +10,16 @@ export class ApiError extends Error {
 let onUnauthorized = () => {};
 export function setUnauthorizedHandler(fn) { onUnauthorized = fn; }
 
+// Na prévia (modo demonstração) as chamadas são respondidas no próprio navegador.
+let demoHandler = null;
+export function useDemo(handler) { demoHandler = handler; }
+
 export async function api(method, path, body) {
+  if (demoHandler) {
+    const { status, data } = await demoHandler(method, path, body);
+    if (status >= 400) throw new ApiError(data?.error || `Erro ${status}`, status);
+    return data;
+  }
   let res;
   try {
     res = await fetch('/api' + path, {
@@ -41,6 +50,7 @@ export const del = (p) => api('DELETE', p);
 
 /** Baixa um arquivo da API (CSV/backup) mantendo o login. */
 export async function download(path) {
+  if (demoHandler) throw new ApiError('Na prévia não dá para baixar arquivos. No app instalado funciona.', 400);
   const res = await fetch('/api' + path, { credentials: 'same-origin' });
   if (!res.ok) throw new ApiError('Não foi possível baixar o arquivo.', res.status);
   const name = /filename="([^"]+)"/.exec(res.headers.get('content-disposition') || '')?.[1] || 'arquivo';

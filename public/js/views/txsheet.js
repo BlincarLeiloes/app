@@ -33,7 +33,7 @@ export function openTxSheet(ctx, tx, preset = {}) {
           data.category = data.category === c.id ? null : c.id;
           drawCats();
         },
-      }, h('span', { class: 'e' }, c.icon), c.label)));
+      }, c.label)));
     };
     drawCats();
 
@@ -45,10 +45,10 @@ export function openTxSheet(ctx, tx, preset = {}) {
     };
     drawQuick();
 
-    const note = h('textarea', { class: 'input', maxlength: '500', rows: '2', placeholder: 'Opcional', oninput: () => { data.note = note.value; } });
+    const note = h('textarea', { class: 'input', id: 'tx-note', maxlength: '500', rows: '2', oninput: () => { data.note = note.value; } });
     note.value = data.note;
 
-    const kindSeg = seg([['in', '↓ Entrada'], ['out', '↑ Saída']], data.kind, (v) => {
+    const kindSeg = seg([['in', 'Entrada'], ['out', 'Saída']], data.kind, (v) => {
       data.kind = v;
       data.category = null;
       amount.className = `amount-input num ${v}`;
@@ -78,7 +78,7 @@ export function openTxSheet(ctx, tx, preset = {}) {
           if (m !== state.month) {
             state.month = m;
             toast(`Salvo em ${monthLabel(m)}`);
-          } else toast(editing ? 'Alterações salvas' : (body.kind === 'in' ? 'Entrada registrada ✓' : 'Saída registrada ✓'));
+          } else toast(editing ? 'Alterações salvas' : (body.kind === 'in' ? 'Entrada registrada' : 'Saída registrada'));
           ctx.changed();
         } catch (err) {
           error.textContent = err.message;
@@ -89,13 +89,13 @@ export function openTxSheet(ctx, tx, preset = {}) {
     },
     kindSeg,
     amount,
-    h('div', { style: { textAlign: 'center', color: 'var(--faint)', fontSize: '12px', marginBottom: '16px' } }, 'Digite só os números'),
+    h('div', { style: { textAlign: 'center', color: 'var(--fg-3)', fontSize: '12.5px', marginBottom: '18px' } }, 'Digite só os números'),
     error,
     h('label', { class: 'field' }, h('span', null, 'Descrição'), desc),
-    h('div', { class: 'field' }, h('span', null, 'Categoria'), cats, h('small', null, 'Se não escolher, o app tenta adivinhar pela descrição.')),
+    h('div', { class: 'field' }, h('span', null, 'Categoria'), cats, h('small', null, 'Se não escolher, o app escolhe pela descrição.')),
     h('label', { class: 'field' }, h('span', null, 'Data'), date, quick),
-    h('label', { class: 'field' }, h('span', null, 'Observação'), note),
-    tx?.source && tx.source !== 'manual' ? h('p', { class: 'note' }, 'Este lançamento veio de uma importação/banco. Se apagar e importar de novo, ele não volta duplicado.') : null,
+    h('label', { class: 'field' }, h('span', null, 'Observação (opcional)'), note),
+    tx?.source && tx.source !== 'manual' ? h('p', { class: 'note', style: { marginBottom: '16px' } }, 'Este lançamento veio do banco ou de um extrato importado. Se apagar e importar de novo, ele não duplica.') : null,
     save,
     editing ? h('button', {
       class: 'btn danger block', type: 'button', style: { marginTop: '10px' },

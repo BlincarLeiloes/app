@@ -121,7 +121,7 @@ export function confirmDialog(title, text, { ok = 'Confirmar', danger = false } 
   return new Promise((resolve) => {
     let answer = false;
     sheet(title, (close) => h('div', null,
-      h('p', { style: { color: 'var(--muted)', marginTop: 0 } }, text),
+      h('p', { style: { color: 'var(--fg-2)', marginTop: 0 } }, text),
       h('div', { class: 'btn-row', style: { marginTop: '18px' } },
         h('button', { class: 'btn', onclick: close }, 'Cancelar'),
         h('button', { class: 'btn ' + (danger ? 'danger' : 'primary'), onclick: () => { answer = true; close(); } }, ok))),
@@ -187,9 +187,8 @@ export function seg(options, value, onChange, cls = '') {
 }
 
 export function errorCard(message, retry) {
-  return h('div', { class: 'card err-card' },
-    h('div', { style: { fontSize: '34px' } }, '😕'),
-    h('p', null, message || 'Algo deu errado.'),
+  return h('div', { class: 'err-card' },
+    h('p', { style: { marginTop: 0 } }, message || 'Algo deu errado.'),
     retry ? h('button', { class: 'btn sm', onclick: retry }, 'Tentar de novo') : null);
 }
 

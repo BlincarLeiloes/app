@@ -2,7 +2,6 @@
 
 import express from 'express';
 import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
 import { loadUser } from './auth.js';
 import { HttpError } from './util.js';
 import { accountRoutes } from './routes/account.js';
@@ -69,11 +68,8 @@ export function createApp({ db, config, pluggyClient } = {}) {
       else res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     },
   }));
-  // qualquer outra rota abre o app
-  app.get(/^\/(?!api\/).*/, (req, res) => {
-    res.setHeader('Cache-Control', 'no-cache');
-    res.sendFile(join(PUBLIC_DIR, 'index.html'));
-  });
+  // qualquer outro endereço volta para o início do app
+  app.get(/^\/(?!api\/).*/, (req, res) => res.redirect('/'));
 
   return app;
 }

@@ -1,6 +1,7 @@
 // Inicialização do app: rotas, navegação, estado e service worker (modo offline).
 import { h, icon, toast, errorCard, skeleton } from './ui.js';
-import { get, post, setUnauthorizedHandler } from './api.js';
+import { get, post, setUnauthorizedHandler, useDemo } from './api.js';
+import { applyTheme } from './theme.js';
 import { localToday, monthOf } from './core/format.js';
 import { renderAuth } from './views/auth.js';
 import { renderHome } from './views/home.js';
@@ -10,7 +11,9 @@ import { renderPerfil } from './views/perfil.js';
 import { openTxSheet } from './views/txsheet.js';
 import { openNotifications } from './views/notifications.js';
 
-export const APP_VERSION = '2.0.0';
+export const APP_VERSION = '2.1.0';
+const DEMO = document.querySelector('meta[name="app-mode"]')?.content === 'demo';
+applyTheme();
 
 const state = {
   user: null,
@@ -22,7 +25,7 @@ const state = {
 };
 
 const cache = new Map();
-const routes = { '': renderHome, extrato: renderExtrato, analise: renderAnalise, perfil: renderPerfil };
+const routes = { '': renderHome, inicio: renderHome, extrato: renderExtrato, analise: renderAnalise, perfil: renderPerfil };
 let lastRoute = null;
 
 const currentRoute = () => location.hash.replace(/^#\/?/, '').split('?')[0];
@@ -72,7 +75,7 @@ function updateBadge(btn) {
 const ctx = {
   state,
   load,
-  navigate(route) { location.hash = '#/' + route; },
+  navigate(route) { location.hash = route || 'inicio'; },
   setMonth(month) { state.month = month; render(); },
   openTx(tx, preset) { openTxSheet(ctx, tx, preset); },
   openNotifications() { openNotifications(ctx); },
@@ -94,7 +97,7 @@ const ctx = {
   async logout() {
     try { await post('/auth/logout'); } catch { /* mesmo offline, sai localmente */ }
     await clearApiCache();
-    history.replaceState(null, '', '#/');
+    history.replaceState(null, '', '#inicio');
     state.user = null;
     cache.clear();
     render();
@@ -111,10 +114,11 @@ async function clearApiCache() {
 }
 
 function nav(route) {
-  const link = (r, label, ic) => h('a', { href: '#/' + r, 'aria-current': route === r ? 'page' : null }, icon(ic), label);
+  const current = route || 'inicio';
+  const link = (r, label, ic) => h('a', { href: '#' + r, 'aria-current': current === r ? 'page' : null }, icon(ic), label);
   return h('nav', { class: 'nav', 'aria-label': 'Navegação principal' },
     h('div', { class: 'nav-inner' },
-      link('', 'Início', 'home'),
+      link('inicio', 'Início', 'home'),
       link('extrato', 'Extrato', 'list'),
       h('button', { class: 'fab', 'aria-label': 'Novo lançamento', onclick: () => ctx.openTx() }, icon('plus')),
       link('analise', 'Análise', 'chart'),
@@ -129,8 +133,8 @@ function render() {
   }
   let route = currentRoute();
   if (route === 'novo') {
-    history.replaceState(null, '', '#/');
-    route = '';
+    history.replaceState(null, '', '#inicio');
+    route = 'inicio';
     setTimeout(() => ctx.openTx(), 60);
   }
   const view = routes[route] || renderHome;
@@ -142,8 +146,8 @@ function render() {
     screen = h('div', { class: 'screen' }, errorCard('Erro ao abrir a tela.', render));
   }
   app.replaceChildren(screen, nav(route));
-  if (route !== lastRoute) window.scrollTo(0, 0);
-  lastRoute = route;
+  if ((route || 'inicio') !== lastRoute) window.scrollTo(0, 0);
+  lastRoute = route || 'inicio';
 }
 
 window.addEventListener('hashchange', render);
@@ -184,7 +188,7 @@ window.addEventListener('appinstalled', () => {
   toast('App instalado! Procure o ícone na tela inicial.');
 });
 
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+if (!DEMO && 'serviceWorker' in navigator && location.protocol !== 'file:') {
   const hadController = !!navigator.serviceWorker.controller;
   navigator.serviceWorker.register('/sw.js').catch(() => {});
   navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -193,6 +197,13 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
 }
 
 async function boot() {
+  if (DEMO) {
+    const demo = await import('./demo.js');
+    useDemo(demo.handle);
+    ctx.demoBar = () => h('div', { class: 'demo-bar' },
+      h('span', null, 'Prévia com dados de exemplo. O que você lançar fica só neste aparelho.'),
+      h('button', { onclick: () => { demo.reset(); ctx.changed(); } }, 'Recomeçar'));
+  }
   try {
     const st = await get('/auth/status');
     state.user = st.user;

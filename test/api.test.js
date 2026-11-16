@@ -245,6 +245,7 @@ for (const [name, open] of Object.entries(backends)) {
     test('app (PWA) é servido em qualquer rota', async () => {
       const res = await fetch(base + '/qualquer/coisa');
       assert.equal(res.status, 200);
+      assert.equal(new URL(res.url).pathname, '/');
       assert.match(await res.text(), /<!doctype html>/i);
       assert.equal((await api.get('/api/nao-existe')).status, 404);
     });

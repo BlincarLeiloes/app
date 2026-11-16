@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#08080d",
-  "theme_color": "#08080d",
+  "background_color": "#0b0a0e",
+  "theme_color": "#0b0a0e",
   "lang": "pt-BR",
   "categories": ["finance", "productivity"],
   "icons": [
@@ -17,7 +17,7 @@
     { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Novo lançamento", "short_name": "Lançar", "url": "/#/novo", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Extrato", "url": "/#/extrato", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Novo lançamento", "short_name": "Lançar", "url": "/#novo", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Extrato", "url": "/#extrato", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }
